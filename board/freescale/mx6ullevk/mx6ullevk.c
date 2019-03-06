@@ -29,6 +29,7 @@
 #include <usb.h>
 #include <usb/ehci-fsl.h>
 #include <asm/imx-common/video.h>
+#include <watchdog.h>
 
 #ifdef CONFIG_FSL_FASTBOOT
 #include <fsl_fastboot.h>
@@ -806,6 +807,34 @@ int board_early_init_f(void)
 
 	return 0;
 }
+
+// add by hejinlong start
+static iomux_v3_cfg_t const droi_cpu1_setgpio[] = {
+	MX6_PAD_GPIO1_IO00__GPIO1_IO00 | MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
+int droi_cpu1_poweron(void)
+{
+	int i = 0;
+
+	imx_iomux_v3_setup_multiple_pads(droi_cpu1_setgpio,
+					 ARRAY_SIZE(droi_cpu1_setgpio));
+
+	// delay 1s for poweron cpu1
+	gpio_direction_output(IMX_GPIO_NR(1, 0) , 1);
+	udelay(1000000);
+	WATCHDOG_RESET();
+	gpio_direction_output(IMX_GPIO_NR(1, 0) , 0);
+
+	// delay 20s for wait cpu1 work normal
+	for (i = 0; i < 20; i++) {
+		udelay(1000000);
+		WATCHDOG_RESET();
+	}
+
+	return 0;
+}
+// add by hejinlong end
 
 int board_init(void)
 {

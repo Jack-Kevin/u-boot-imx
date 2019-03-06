@@ -826,6 +826,7 @@ __weak int arch_cpu_init_dm(void)
 	return 0;
 }
 
+extern int droi_cpu1_poweron(void);
 static init_fnc_t init_sequence_f[] = {
 #ifdef CONFIG_SANDBOX
 	setup_ram_buf,
@@ -879,6 +880,9 @@ static init_fnc_t init_sequence_f[] = {
 #if defined(CONFIG_SYS_FSL_CLK) || defined(CONFIG_M68K)
 	get_clocks,
 #endif
+// add by hejinlong start
+	droi_cpu1_poweron,
+// add by hejinlong end
 	env_init,		/* initialize environment */
 #if defined(CONFIG_8xx_CPUCLK_DEFAULT)
 	/* get CPU and bus clocks according to the environment variable */
