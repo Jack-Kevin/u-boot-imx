@@ -346,7 +346,7 @@ static iomux_v3_cfg_t const usdhc1_pads[] = {
 	/* CD */
 	MX6_PAD_UART1_RTS_B__GPIO1_IO19 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	/* RST_B */
-	MX6_PAD_GPIO1_IO09__GPIO1_IO09 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	//MX6_PAD_GPIO1_IO09__GPIO1_IO09 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
 /*
@@ -440,7 +440,7 @@ static struct fsl_esdhc_cfg usdhc_cfg[2] = {
 };
 
 #define USDHC1_CD_GPIO	IMX_GPIO_NR(1, 19)
-#define USDHC1_PWR_GPIO	IMX_GPIO_NR(1, 9)
+//#define USDHC1_PWR_GPIO	IMX_GPIO_NR(1, 9)
 #define USDHC2_CD_GPIO	IMX_GPIO_NR(4, 5)
 #define USDHC2_PWR_GPIO	IMX_GPIO_NR(4, 10)
 
@@ -523,9 +523,9 @@ int board_mmc_init(bd_t *bis)
 			gpio_direction_input(USDHC1_CD_GPIO);
 			usdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC_CLK);
 
-			gpio_direction_output(USDHC1_PWR_GPIO, 0);
-			udelay(500);
-			gpio_direction_output(USDHC1_PWR_GPIO, 1);
+			//gpio_direction_output(USDHC1_PWR_GPIO, 0);
+			//udelay(500);
+			//gpio_direction_output(USDHC1_PWR_GPIO, 1);
 			break;
 		case 1:
 #if defined(CONFIG_MX6ULL_EVK_EMMC_REWORK)
@@ -774,8 +774,8 @@ void do_enable_parallel_lcd(struct display_info_t const *dev)
 	udelay(500);
 	gpio_direction_output(IMX_GPIO_NR(5, 9) , 1);
 
-	/* Set Brightness to high */
-	gpio_direction_output(IMX_GPIO_NR(1, 8) , 1);
+	/* Set gpio1-8 input for adc1 */
+	gpio_direction_input(IMX_GPIO_NR(1, 8));
 }
 
 struct display_info_t const displays[] = {{
@@ -811,6 +811,7 @@ int board_early_init_f(void)
 // add by hejinlong start
 static iomux_v3_cfg_t const droi_cpu1_setgpio[] = {
 	MX6_PAD_GPIO1_IO00__GPIO1_IO00 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	MX6_PAD_GPIO1_IO09__GPIO1_IO09 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
 int droi_cpu1_poweron(void)
@@ -820,11 +821,15 @@ int droi_cpu1_poweron(void)
 	imx_iomux_v3_setup_multiple_pads(droi_cpu1_setgpio,
 					 ARRAY_SIZE(droi_cpu1_setgpio));
 
+
 	// delay 1s for poweron cpu1
 	gpio_direction_output(IMX_GPIO_NR(1, 0) , 1);
 	udelay(1000000);
 	WATCHDOG_RESET();
 	gpio_direction_output(IMX_GPIO_NR(1, 0) , 0);
+
+        // rtl8111 power on
+	gpio_direction_output(IMX_GPIO_NR(1, 9) , 1);
 
 	// delay 20s for wait cpu1 work normal
 	for (i = 0; i < 20; i++) {
