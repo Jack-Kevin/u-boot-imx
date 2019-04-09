@@ -855,7 +855,9 @@ int board_init(void)
 #endif
 
 #ifdef	CONFIG_FEC_MXC
+	/*/ DZ.zhangwuba 2019-4-4
 	setup_fec(CONFIG_FEC_ENET_DEV);
+	//*/
 #endif
 
 #ifdef CONFIG_USB_EHCI_MX6

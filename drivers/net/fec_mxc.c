@@ -45,6 +45,10 @@ DECLARE_GLOBAL_DATA_PTR;
 #error "CONFIG_MII has to be defined!"
 #endif
 
+//*/ DZ.zhangwuba 2019-4-4
+#define FEC_QUIRK_ENET_MAC
+//*/
+
 #ifndef CONFIG_FEC_XCV_TYPE
 #define CONFIG_FEC_XCV_TYPE MII100
 #endif

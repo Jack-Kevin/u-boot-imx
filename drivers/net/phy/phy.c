@@ -275,6 +275,10 @@ int genphy_update_link(struct phy_device *phydev)
 			phydev->link = 0;
 	}
 
+	//*/ DZ.zhangwuba 2019-4-4
+        phydev->link = 1;
+	//*/
+
 	return 0;
 }
 
@@ -361,6 +365,7 @@ int genphy_parse_link(struct phy_device *phydev)
 		}
 
 	} else {
+		/*/ DZ.zhangwuba 2019-4-4
 		u32 bmcr = phy_read(phydev, MDIO_DEVAD_NONE, MII_BMCR);
 
 		phydev->speed = SPEED_10;
@@ -373,7 +378,13 @@ int genphy_parse_link(struct phy_device *phydev)
 			phydev->speed = SPEED_1000;
 		else if (bmcr & BMCR_SPEED100)
 			phydev->speed = SPEED_100;
+		//*/
 	}
+
+	//*/ DZ.zhangwuba 2019-4-4
+        phydev->speed = SPEED_100;
+	phydev->duplex = DUPLEX_FULL;
+	//*/
 
 	return 0;
 }
@@ -390,6 +401,7 @@ int genphy_config(struct phy_device *phydev)
 	/* Do we support autonegotiation? */
 	val = phy_read(phydev, MDIO_DEVAD_NONE, MII_BMSR);
 
+	/*/ DZ.zhangwuba 2019-4-4
 	if (val < 0)
 		return val;
 
@@ -420,6 +432,11 @@ int genphy_config(struct phy_device *phydev)
 		if (val & ESTATUS_1000_XHALF)
 			features |= SUPPORTED_1000baseX_Half;
 	}
+	//*/
+
+	//*/ DZ.zhangwuba 2019-4-4
+        features |= SUPPORTED_100baseT_Full;
+	//*/
 
 	phydev->supported &= features;
 	phydev->advertising &= features;
@@ -614,7 +631,11 @@ static struct phy_device *phy_device_create(struct mii_dev *bus, int addr,
 	dev->link = 0;
 	dev->interface = interface;
 
+	/*/DZ.zhangwuba 2019-4-4
 	dev->autoneg = AUTONEG_ENABLE;
+	//*/
+	dev->autoneg = 0;//AUTONEG_ENABLE;
+	//*/
 
 	dev->addr = addr;
 	dev->phy_id = phy_id;
